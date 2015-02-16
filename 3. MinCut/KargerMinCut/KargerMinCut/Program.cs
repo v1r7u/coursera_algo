@@ -9,14 +9,27 @@ namespace KargerMinCut
     {
         static void Main()
         {
-            const string path = @"E:\projects\coursera\3. MinCut\testCase1.txt";
-            const string path2 = @"E:\projects\coursera\3. MinCut\kargerMinCut.txt";
-            Graph graph = ParseInitialFile(path);
+            //const string path = @"E:\projects\coursera_algo\3. MinCut\testCase3.txt";
+            const string path = @"E:\projects\coursera_algo\3. MinCut\kargerMinCut.txt";
 
-            int minimumCut = graph.GetMinimumCut();
+            var minResult = Test(path);
 
-            Console.WriteLine(minimumCut);
+            Console.WriteLine(minResult);
             Console.ReadKey();
+        }
+
+        private static int Test(string path)
+        {
+            int minResult = int.MaxValue;
+            for (int i = 0; i < 1000; i++)
+            {
+                Graph graph = ParseInitialFile(path);
+
+                int minimumCut = graph.GetMinimumCut();
+                if (minimumCut < minResult)
+                    minResult = minimumCut;
+            }
+            return minResult;
         }
 
         private static Graph ParseInitialFile(string path)
@@ -44,7 +57,6 @@ namespace KargerMinCut
                     {
                         var edge = new Edge(vertices[currentName - 1], vertices[int.Parse(elements[j]) - 1]);
                         edges.Add(edge);
-                        vertices[i].AddEdge(edge);
                     }
                 }
             }

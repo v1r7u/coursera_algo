@@ -27,7 +27,7 @@ namespace KargerMinCut
             if (!_directional)
             {
                 return baseComparisonResult ||
-                       (Vertex1.Name == other.Vertex2.Name && Vertex1.Name == other.Vertex2.Name);
+                       (Vertex1.Name == other.Vertex2.Name && Vertex2.Name == other.Vertex1.Name);
             }
             return baseComparisonResult;
         }
@@ -56,19 +56,6 @@ namespace KargerMinCut
         public override string ToString()
         {
             return string.Format("{0} - {1}", Vertex1.Name, Vertex2.Name);
-        }
-
-        public void Destroy()
-        {
-            Vertex1.RemoveEdge(this);
-            Vertex2.RemoveEdge(this);
-            foreach (var edge in Vertex1.Edges)
-            {
-                if (edge.Vertex2.Name != Vertex2.Name)
-                {
-                    edge.Vertex1 = Vertex2;
-                }
-            }
         }
     }
 }

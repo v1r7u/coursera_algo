@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace KargerMinCut
 {
@@ -17,39 +16,37 @@ namespace KargerMinCut
                 return Edges.Count;
 
             Edge randomEdge = GetRandomEdge(Edges.Count);
-            Edges.Remove(randomEdge);
-            
-            // todo: remove only if the one same egde
-            Vertices.Remove(randomEdge.Vertex1);
 
-            var count = Edges.Count;
-            for (int i = 0; i < count; i++)
+            Edges.Remove(randomEdge);
+
+            Vertices.Remove(randomEdge.Vertex1);
+            var name = randomEdge.Vertex1.Name;
+
+            for (int index = 0; index < Edges.Count;)
             {
-                var edge = Edges[i];
-                if (edge.Vertex1.Name == randomEdge.Vertex1.Name)
+                var edge = Edges[index];
+
+                if (edge.Vertex1.Name == name)
                 {
-                    var newEdge = new Edge(randomEdge.Vertex2, edge.Vertex2);
-                    randomEdge.Vertex2.ReplaceEdge(edge, newEdge);
-                    Edges.Remove(edge);
-                    Edges.Add(newEdge);
-                    //edge.Vertex1 = randomEdge.Vertex2;
-                    // todo: add new adge to randomEdge.Vertex2
+                    edge.Vertex1 = randomEdge.Vertex2;
                 }
-                else if (edge.Vertex2.Name == randomEdge.Vertex1.Name)
+                else if (edge.Vertex2.Name == name)
                 {
-                    var newEdge = new Edge(edge.Vertex1, randomEdge.Vertex2);
-                    randomEdge.Vertex2.ReplaceEdge(edge, newEdge);
+                    edge.Vertex2 = randomEdge.Vertex2;
+                }
+
+                if (edge.Vertex1.Name == edge.Vertex2.Name)
+                {
                     Edges.Remove(edge);
-                    Edges.Add(newEdge);
-                    //edge.Vertex2 = randomEdge.Vertex2;
-                    // todo: add new adge to randomEdge.Vertex2
+                }
+                else
+                {
+                    index++;
                 }
             }
-            Edges = Edges.OrderBy(i=> i.Vertex1.Name).ToList();
 
             return GetMinimumCut();
         }
-
 
         private Edge GetRandomEdge(int max)
         {
