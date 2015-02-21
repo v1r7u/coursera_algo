@@ -43,10 +43,7 @@
   <ItemGroup>
     <Compile Include="GraphClasses\Edge.cs" />
     <Compile Include="GraphClasses\Graph.cs" />
-    <Compile Include="GraphClasses\GraphWithFinishingTimes.cs" />
-    <Compile Include="GraphClasses\GraphWithLeader.cs" />
     <Compile Include="GraphClasses\Vertex.cs" />
-    <Compile Include="GraphClasses\VertexBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

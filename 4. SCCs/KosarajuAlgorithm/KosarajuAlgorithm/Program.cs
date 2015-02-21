@@ -8,29 +8,32 @@ namespace KosarajuAlgorithm
 {
     class Program
     {
-        const int vertexCount = 875714;
+        //private const int vertexCount = 9;
+        private const int vertexCount = 875714;
 
         static void Main(string[] args)
+        {
+            var graph = GraphWithLeader();
+
+            graph.DFSLoop();
+
+            Console.ReadKey();
+        }
+
+        private static Graph GraphWithLeader()
         {
             const string path = @"E:\projects\coursera_algo\4. SCCs\SCC.txt";
             //const string path = @"E:\projects\coursera_algo\4. SCCs\3_3_3_0_0.txt";
             var _initialGraph = ParseInitialFile(path);
-            var _reversedGraph = GetReversedGraph(_initialGraph);
-
-            _reversedGraph.DFSLoop();
-            SetFinishingTimes(_initialGraph, _reversedGraph);
 
             _initialGraph.DFSLoop();
-            foreach (var vertex in _initialGraph.Vertices)
-            {
-                Console.WriteLine("Vertex: {0}, Leader: {1}, Finishing time: {2}", vertex.Name, vertex.Leader.Name, vertex.FinishingTime);
-            }
+            
+            var _reversedGraph = Reverse(_initialGraph);
 
-            Console.WriteLine(_initialGraph.GetLeaders());
-            Console.ReadKey();
+            return _reversedGraph;
         }
 
-        private static GraphWithLeader ParseInitialFile(string path)
+        private static Graph ParseInitialFile(string path)
         {
             var vertices = new Vertex[vertexCount];
             for (int i = 0; i < vertexCount; i++)
@@ -50,8 +53,8 @@ namespace KosarajuAlgorithm
                         .Select(int.Parse)
                         .ToArray();
 
-                    var vertex1 = vertices[split[0] - 1];
-                    var vertex2 = vertices[split[1] - 1];
+                    var vertex1 = vertices[split[1] - 1];
+                    var vertex2 = vertices[split[0] - 1];
                     var edge = new Edge(vertex1, vertex2);
                     vertex1.AddEdge(edge);
                     edges.Add(edge);
@@ -59,23 +62,20 @@ namespace KosarajuAlgorithm
                 }
             }
 
-            return new GraphWithLeader
+            return new Graph
             {
-                Edges = edges,
-                Vertices = vertices.OrderBy(i=> i.Name).ToList()
+                Edges = edges.ToArray(),
+                Vertices = vertices
             };
         }
 
-        private static GraphWithFinishingTimes GetReversedGraph(Graph initialGraph)
+        private static Graph Reverse(Graph initialGraph)
         {
-            var reversedGraph = new GraphWithFinishingTimes
-            {
-                Edges = new List<Edge>()
-            };
+            var edges = new List<Edge>();
             var vertices = new Vertex[vertexCount];
             for (int i = 0; i < vertexCount; i++)
             {
-                vertices[i] = new Vertex(i + 1);
+                vertices[i] = new Vertex(i + 1,initialGraph.Vertices[i].FinishingTime);
             }
             foreach (var edge in initialGraph.Edges)
             {
@@ -84,21 +84,14 @@ namespace KosarajuAlgorithm
 
                 var newEdge = new Edge(vertex2, vertex1);
                 vertex2.Edges.Add(newEdge);
-                reversedGraph.Edges.Add(newEdge);
+                edges.Add(newEdge);
             }
 
-            reversedGraph.Vertices = vertices.ToList();
-            return reversedGraph;
-        }
-
-        private static void SetFinishingTimes(Graph initialGraph, Graph reversedGraph)
-        {
-            foreach (var vertex in reversedGraph.Vertices)
+            return new Graph
             {
-                var first = initialGraph.Vertices.First(i => i.Name == vertex.Name);
-                first.FinishingTime = vertex.FinishingTime;
-            }
-            initialGraph.Vertices = initialGraph.Vertices.OrderBy(i => i.FinishingTime).ToList();
+                Vertices = vertices.OrderBy(i=> i.FinishingTime).ToArray(),
+                Edges = edges.ToArray()
+            };
         }
     }
 }
